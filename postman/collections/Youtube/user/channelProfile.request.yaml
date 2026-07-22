@@ -1,0 +1,9 @@
+$kind: http-request
+name: channelProfile
+description: ""
+url: "{{server}}/users/c/one"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4503486648357954

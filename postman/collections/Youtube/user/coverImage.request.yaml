@@ -1,0 +1,9 @@
+$kind: http-request
+name: coverImage
+description: ""
+url: "{{server}}/users/cover-image"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4503098876649716

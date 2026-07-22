@@ -1,0 +1,9 @@
+$kind: http-request
+name: Avatar
+description: ""
+url: "{{server}}/users/avatar"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4502524466762136

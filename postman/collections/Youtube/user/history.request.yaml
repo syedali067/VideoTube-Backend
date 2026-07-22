@@ -1,0 +1,9 @@
+$kind: http-request
+name: history
+description: ""
+url: "{{server}}/users/history"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4503531035962252

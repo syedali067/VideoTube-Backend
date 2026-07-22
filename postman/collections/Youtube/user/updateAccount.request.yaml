@@ -1,0 +1,9 @@
+$kind: http-request
+name: updateAccount
+description: ""
+url: "{{server}}/users/update-account"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4501946691519142

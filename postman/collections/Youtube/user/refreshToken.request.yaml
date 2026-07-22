@@ -1,0 +1,9 @@
+$kind: http-request
+name: refreshToken
+description: ""
+url: "{{server}}/users/refresh-tokken"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4490239068733888

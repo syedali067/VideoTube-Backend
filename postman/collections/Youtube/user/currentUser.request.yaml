@@ -1,0 +1,9 @@
+$kind: http-request
+name: currentUser
+description: ""
+url: "{{server}}/users/current-user"
+method: POST
+body:
+  type: json
+  content: ""
+order: 4501501000052789
