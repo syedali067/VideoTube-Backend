@@ -49,7 +49,9 @@ const registerUser = asyncHandler(async (req, res) => {
         avatar: avatar.url,
         coverImage: coverImage?.url || ""
     });
-
+    if(!user){
+        throw new ApiError(500, "Error while creating user");
+    }
 
     //remove password from response
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
