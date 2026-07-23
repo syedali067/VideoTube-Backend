@@ -1,0 +1,15 @@
+$kind: http-request
+name: healthcheck
+description: ""
+url: "{{server}}/healthcheck"
+method: PATCH
+body:
+  type: formdata
+  content:
+    - type: file
+      key: coverImage
+      src:
+        - /C:/Users/ALI/Downloads/Iani Shawl3.jpeg
+      description: ""
+      disabled: false
+order: 1784830157793

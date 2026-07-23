@@ -24,9 +24,13 @@ app.use(cookieParser());
 
 //routes
 import userRoutes from './routes/user.route.js';
+import healthcheckRoutes from './routes/healthcheck.route.js';
+import videoRoutes from './routes/video.route.js';
 
 //routes declaration
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/healthcheck', healthcheckRoutes);
+app.use('/api/v1/videos', videoRoutes);
 
 // at the very end of app.js, after all routes
 app.use((err, req, res, next) => {
