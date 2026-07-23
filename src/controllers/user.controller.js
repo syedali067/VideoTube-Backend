@@ -211,13 +211,13 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     await user.save({ validateBeforeSave: false})
 
     return res.status(200)
-    .json(new ApiResponse(200, {} ,"Password Changed Successfully"))
+    .json(new ApiResponse(200, "Password Changed Successfully", {}))
 });
 
 const getCurrentUser = asyncHandler(async(req, res) =>{
     return res
     .status(200)
-    .json(new ApiResponse(200,  req.user, "Current User Fetched Successfully"))
+    .json(new ApiResponse(200, "Current User Fetched Successfully", req.user))
 });
 
 const updateAccountDetails = asyncHandler(async(req,res) =>{
@@ -267,15 +267,15 @@ const updateUserAvatar = asyncHandler(async(req,res) => {
                 avatar : avatar.url
             }
         },
-        {
-            new : true
+        { 
+            new: true, returnDocument: 'after' 
         }
     ).select("-password")
 
     return res
     .status(200)
     .json(
-        new ApiResponse(200, user , "Avatar Updated Successfully")
+        new ApiResponse(200, "Avatar Updated Successfully", user)
     )
 });
 
@@ -300,15 +300,15 @@ const updateUserCoverImage = asyncHandler(async(req,res) => {
                 coverImage : coverImage.url
             }
         },
-        {
-            new : true
+        { 
+            new: true, returnDocument: 'after' 
         }
     ).select("-password")
 
     return res
     .status(200)
     .json(
-        new ApiResponse(200, user , "Cover Image Updated Successfully")
+        new ApiResponse(200, "Cover Image Updated Successfully", user)
     )
 });
 
@@ -425,7 +425,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
     ])
     return res
     .status(200)
-    .json(new ApiResponse(200,user[0].getWatchHistory,"Watch History Fetched Successfully"))
+    .json(new ApiResponse(200,user[0].watchHistory,"Watch History Fetched Successfully"))
 })
 
 export { 
