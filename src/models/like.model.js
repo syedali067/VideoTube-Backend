@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import Moongoose,{Schema} from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 
 const likeSchema = new Schema(
     {

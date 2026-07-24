@@ -1,0 +1,9 @@
+$kind: http-request
+name: PlayListID
+description: ""
+url: "{{server}}/playlists/6a63463f0add1bbd4be7fc89"
+method: GET
+body:
+  type: json
+  content: '{ "name": "Favorites", "description": "My favorite videos" }'
+order: 4486843415816581

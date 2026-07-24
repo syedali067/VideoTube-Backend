@@ -1,0 +1,9 @@
+$kind: http-request
+name: deleteComment
+description: ""
+url: "{{server}}/comments/c/6a633ee77ba37bb6453b2b2d"
+method: DELETE
+body:
+  type: json
+  content: '{ "content": "Updated Comment" }'
+order: 3998068441043482

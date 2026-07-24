@@ -1,0 +1,15 @@
+$kind: http-request
+name: isPublished
+description: ""
+url: "{{server}}/videos/toggle/publish/6a6338cc80f82b3323e48d0b"
+method: PATCH
+body:
+  type: formdata
+  content:
+    - type: file
+      key: coverImage
+      src:
+        - /C:/Users/ALI/Downloads/Iani Shawl3.jpeg
+      description: ""
+      disabled: false
+order: 4439342208021561

@@ -2,7 +2,7 @@ $kind: http-request
 name: currentUser
 description: ""
 url: "{{server}}/users/current-user"
-method: POST
+method: GET
 body:
   type: json
   content: ""

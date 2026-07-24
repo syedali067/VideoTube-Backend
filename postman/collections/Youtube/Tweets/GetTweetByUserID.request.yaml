@@ -1,0 +1,9 @@
+$kind: http-request
+name: GetTweetByUserID
+description: ""
+url: "{{server}}/tweets/user/6a6072afc5b37dc9557f2cf8"
+method: GET
+body:
+  type: json
+  content: '{ "content": "My first tweet!" }'
+order: 1573228827521227

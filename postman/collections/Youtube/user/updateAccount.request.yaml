@@ -2,8 +2,14 @@ $kind: http-request
 name: updateAccount
 description: ""
 url: "{{server}}/users/update-account"
-method: POST
+method: PATCH
 body:
   type: json
-  content: ""
+  content: "{\r
+
+    \    \"fullName\":\"two\",\r
+
+    \    \"email\":\"two@gmail.com\"\r
+
+    }"
 order: 4501946691519142

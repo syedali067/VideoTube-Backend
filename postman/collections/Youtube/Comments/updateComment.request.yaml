@@ -1,0 +1,9 @@
+$kind: http-request
+name: updateComment
+description: ""
+url: "{{server}}/comments/two/6a633ee77ba37bb6453b2b2d"
+method: PATCH
+body:
+  type: json
+  content: '{ "content": "Nice car!" }'
+order: 3440711055252922

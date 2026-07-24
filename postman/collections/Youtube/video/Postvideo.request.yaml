@@ -1,15 +1,14 @@
 $kind: http-request
-name: Avatar
 description: ""
-url: "{{server}}/users/avatar"
-method: PATCH
+url: "{{server}}/videos"
+method: POST
 body:
   type: formdata
   content:
     - type: file
-      key: avatar
+      key: coverImage
       src:
-        - /E:/Me.jpg
+        - /C:/Users/ALI/Downloads/Iani Shawl3.jpeg
       description: ""
       disabled: false
-order: 4502524466762136
+order: 4362970717674831

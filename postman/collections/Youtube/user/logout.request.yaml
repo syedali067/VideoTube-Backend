@@ -7,7 +7,7 @@ body:
   type: json
   content: "{\r
 
-    \    \"email\":\"one@gmail.com\",\r
+    \    \"email\":\"two@gmail.com\",\r
 
     \    \"password\":\"12345678\"\r
 

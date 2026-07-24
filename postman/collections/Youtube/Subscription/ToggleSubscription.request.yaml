@@ -1,0 +1,9 @@
+$kind: http-request
+name: ToggleSubscription
+description: ""
+url: "{{server}}/subscriptions/c/6a606fefc5b37dc9557f2cf7"
+method: POST
+body:
+  type: json
+  content: ""
+order: 1784892959785

@@ -1,0 +1,14 @@
+$kind: http-request
+name: addComment
+description: ""
+url: "{{server}}/comments/6a6338cc80f82b3323e48d0b"
+method: PATCH
+body:
+  type: formdata
+  content:
+    - type: text
+      key: description
+      value: A beautifull Car
+      description: ""
+      disabled: false
+order: 1784888985235

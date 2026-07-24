@@ -1,0 +1,9 @@
+$kind: http-request
+name: viewComment
+description: ""
+url: "{{server}}/comments/6a6338cc80f82b3323e48d0b"
+method: GET
+body:
+  type: json
+  content: '{ "content": "Nice car!" }'
+order: 3213060713862032

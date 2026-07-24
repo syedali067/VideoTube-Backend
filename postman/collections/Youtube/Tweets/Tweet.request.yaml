@@ -1,0 +1,9 @@
+$kind: http-request
+name: Tweet
+description: ""
+url: "{{server}}/tweets"
+method: POST
+body:
+  type: json
+  content: '{ "content": "My first tweet!" }'
+order: 1784893921902

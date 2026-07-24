@@ -1,0 +1,6 @@
+$kind: http-request
+name: DashboardVideos
+description: ""
+url: "{{server}}/dashboard/videos"
+method: GET
+order: 2226382077205208

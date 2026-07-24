@@ -1,0 +1,53 @@
+$kind: http-request
+name: GetvideoByID
+description: ""
+url: "{{server}}/videos/6a6338cc80f82b3323e48d0b"
+method: GET
+body:
+  type: formdata
+  content:
+    - type: file
+      key: videoFile
+      src:
+        - /E:/New album 1/_ahmede140 _viraltiktok _fypシ(MP4).mp4
+      description: ""
+      disabled: false
+    - type: file
+      key: thumbnail
+      src:
+        - /E:/New album 1/923086735337_status_ac0b2474fc3c42c9b2f66e22918d36a8.jpg
+      description: ""
+      disabled: false
+    - type: text
+      key: title
+      value: Car
+      description: ""
+      disabled: false
+    - type: text
+      key: description
+      value: Black Car Video
+      description: ""
+      disabled: false
+scripts:
+  - type: beforeRequest
+    code: "try {\r
+
+      \    const response = await pm.sendRequest({\r
+
+      \        url: \"https://postman-echo.com/get\",\r
+
+      \        method: \"GET\"\r
+
+      \    });\r
+
+      \r
+
+      \    console.log(response.json());\r
+
+      } catch (err) {\r
+
+      \    console.error(err);\r
+
+      }"
+    language: text/javascript
+order: 4386480531065487

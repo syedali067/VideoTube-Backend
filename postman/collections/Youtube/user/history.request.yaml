@@ -2,7 +2,7 @@ $kind: http-request
 name: history
 description: ""
 url: "{{server}}/users/history"
-method: POST
+method: GET
 body:
   type: json
   content: ""

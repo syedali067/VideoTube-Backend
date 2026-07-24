@@ -1,0 +1,9 @@
+$kind: http-request
+name: UpdateTweet
+description: ""
+url: "{{server}}/tweets/6a635c6888c280039598151b"
+method: PATCH
+body:
+  type: json
+  content: '{ "content": "Tweet Updated" }'
+order: 2564304881100353

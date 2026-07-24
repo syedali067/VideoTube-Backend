@@ -1,0 +1,9 @@
+$kind: http-request
+name: GetSubscribedChannel
+description: ""
+url: "{{server}}/subscriptions/u/6a6072afc5b37dc9557f2cf8"
+method: GET
+body:
+  type: json
+  content: ""
+order: 4090282868838126

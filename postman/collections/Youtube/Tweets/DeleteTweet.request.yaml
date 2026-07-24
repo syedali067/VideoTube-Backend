@@ -1,0 +1,9 @@
+$kind: http-request
+name: DeleteTweet
+description: ""
+url: "{{server}}/tweets/6a635c6888c280039598151b"
+method: DELETE
+body:
+  type: json
+  content: ""
+order: 2600571224691039

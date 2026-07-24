@@ -1,0 +1,9 @@
+$kind: http-request
+name: likedVideo
+description: ""
+url: "{{server}}/likes/videos"
+method: GET
+body:
+  type: json
+  content: '{ "content": "Updated Comment" }'
+order: 4049588756742763

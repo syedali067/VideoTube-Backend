@@ -1,0 +1,9 @@
+$kind: http-request
+name: MyPlayList
+description: ""
+url: "{{server}}/likes/playlists"
+method: POST
+body:
+  type: json
+  content: '{ "content": "Updated Comment" }'
+order: 1784890735926
