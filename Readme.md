@@ -1,19 +1,17 @@
 # VideoTube Backend
 
-A YouTube-inspired backend API built with **Node.js**, **Express**, and **MongoDB**. Implements a complete authentication and user-management system with JWT-based access/refresh tokens, file uploads via Cloudinary, and a scaffolded structure for video, comments, likes, playlists, tweets, and subscriptions.
+A full-featured YouTube-inspired backend API built with **Node.js**, **Express**, and **MongoDB**. Implements complete authentication, video management, engagement (comments, likes, subscriptions), content organization (playlists, tweets), and channel analytics — all with JWT-based auth, file uploads via Cloudinary, and MongoDB aggregation pipelines.
 
 ## Status
 
-✅ **User module — fully implemented and tested**: registration, login, logout, token refresh, password change, profile updates, avatar/cover image uploads, channel profile aggregation, and watch history.
-
-🚧 **Video, Comment, Like, Playlist, Tweet, Subscription, Dashboard, Healthcheck** — models and controller scaffolding exist but business logic is not yet implemented, and routes are not yet mounted in `app.js`.
+✅ **All modules fully implemented and tested**: Users, Videos, Comments, Likes, Playlists, Subscriptions, Tweets, Dashboard, and Healthcheck.
 
 ## Tech Stack
 
 - **Runtime:** Node.js (ESM / `"type": "module"`)
 - **Framework:** Express 5
 - **Database:** MongoDB with Mongoose (+ `mongoose-aggregate-paginate-v2` for paginated aggregations)
-- **Auth:** JWT (access + refresh tokens), bcrypt for password hashing, httpOnly cookies
+- **Auth:** JWT (access + refresh tokens), bcrypt for password hashing, httpOnly cookies + Bearer token support
 - **File uploads:** Multer (local temp storage) → Cloudinary (persistent hosting)
 - **Dev tooling:** nodemon, Prettier
 
@@ -21,24 +19,23 @@ A YouTube-inspired backend API built with **Node.js**, **Express**, and **MongoD
 
 ```
 src/
-├── controllers/       # Route handler logic
-│   ├── user.controller.js         ✅ implemented
-│   ├── video.controller.js        🚧 scaffolded
-│   ├── comment.controller.js      🚧 scaffolded
-│   ├── like.controller.js         🚧 scaffolded
-│   ├── playlist.controller.js     🚧 scaffolded
-│   ├── tweet.controller.js        🚧 scaffolded
-│   ├── subscription.controller.js 🚧 scaffolded
-│   ├── dashboard.controller.js    🚧 scaffolded
-│   └── healthcheck.controller.js  🚧 scaffolded
+├── controllers/       # Route handler logic (all implemented)
+│   ├── user.controller.js
+│   ├── video.controller.js
+│   ├── comment.controller.js
+│   ├── like.controller.js
+│   ├── playlist.controller.js
+│   ├── subscription.controller.js
+│   ├── tweet.controller.js
+│   ├── dashboard.controller.js
+│   └── healthcheck.controller.js
 ├── models/             # Mongoose schemas (user, video, comment, like, playlist, tweet, subscription)
 ├── middlewares/         # auth.middleware.js (JWT verification), multer.js (file upload handling)
-├── routes/
-│   └── user.route.js    # Only route module currently wired into the app
-├── utils/                # ApiError, ApiResponse, asyncHandler, cloudinary upload helper
-├── db/                    # MongoDB connection logic
-├── app.js                 # Express app setup, middleware, route mounting, global error handler
-└── index.js                # Entry point — loads env, connects DB, starts server
+├── routes/               # One route module per resource, all mounted in app.js
+├── utils/                 # ApiError, ApiResponse, asyncHandler, cloudinary upload helper
+├── db/                     # MongoDB connection logic
+├── app.js                  # Express app setup, middleware, route mounting, global error handler
+└── index.js                 # Entry point — loads env, connects DB, starts server
 ```
 
 ## Getting Started
@@ -47,7 +44,7 @@ src/
 
 - Node.js (v18+ recommended)
 - A MongoDB Atlas cluster (or local MongoDB instance)
-- A Cloudinary account (for avatar/cover image uploads)
+- A Cloudinary account (for video/image uploads)
 
 ### Installation
 
@@ -83,56 +80,116 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 npm run dev
 ```
 
-This starts the server with nodemon on `http://localhost:8000` (or your configured `PORT`), watching for file changes.
+Starts the server with nodemon on `http://localhost:8000` (or your configured `PORT`), watching for file changes.
 
 ## API Reference
 
-Base URL: `/api/v1/users`
+Base URL: `/api/v1`
 
-| Method | Endpoint | Auth Required | Description |
-|--------|----------|:---:|--------------|
-| POST | `/register` | No | Register a new user (multipart form: `avatar`, `coverImage` files + text fields) |
-| POST | `/login` | No | Log in with username/email + password; returns access & refresh tokens |
-| POST | `/logout` | Yes | Clear tokens and log out |
-| POST | `/refresh-tokken` | No (needs refresh token) | Issue a new access token using a valid refresh token |
-| POST | `/change-password` | Yes | Change the logged-in user's password |
-| GET | `/current-user` | Yes | Get the currently authenticated user's profile |
-| PATCH | `/update-account` | Yes | Update `fullName` and `email` |
-| PATCH | `/avatar` | Yes | Update avatar image (multipart form: `avatar` file) |
-| PATCH | `/cover-image` | Yes | Update cover image (multipart form: `coverImage` file) |
-| GET | `/c/:username` | Yes | Get a channel's public profile with subscriber counts |
-| GET | `/history` | Yes | Get the authenticated user's watch history |
-
-**Auth:** Protected routes accept either an `accessToken` httpOnly cookie (set automatically on login) or an `Authorization: Bearer <token>` header.
+All protected routes accept either an `accessToken` httpOnly cookie (set automatically on login) or an `Authorization: Bearer <token>` header.
 
 **Response format:**
 ```json
-{
-  "status": 200,
-  "message": "Description of what happened",
-  "data": { },
-  "success": true
-}
+{ "status": 200, "message": "Description of what happened", "data": {}, "success": true }
 ```
-
 Errors follow the same shape with `"success": false` and an `"errors"` array.
+
+### Healthcheck
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| GET | `/healthcheck` | No | Returns server status and uptime |
+
+### Users — `/users`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| POST | `/register` | No | Register (multipart: `avatar`, `coverImage` files + text fields) |
+| POST | `/login` | No | Log in; returns access & refresh tokens |
+| POST | `/logout` | Yes | Log out and clear tokens |
+| POST | `/refresh-tokken` | No* | Issue new access token from a valid refresh token |
+| POST | `/change-password` | Yes | Change password |
+| GET | `/current-user` | Yes | Get authenticated user's profile |
+| PATCH | `/update-account` | Yes | Update `fullName` and `email` |
+| PATCH | `/avatar` | Yes | Update avatar (multipart: `avatar` file) |
+| PATCH | `/cover-image` | Yes | Update cover image (multipart: `coverImage` file) |
+| GET | `/c/:username` | Yes | Get a channel's public profile with subscriber counts |
+| GET | `/history` | Yes | Get authenticated user's watch history |
+
+### Videos — `/videos`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| GET | `/` | Yes | List videos — paginated, searchable (`query`), sortable (`sortBy`, `sortType`), filterable by `userId` |
+| POST | `/` | Yes | Publish a video (multipart: `videoFile`, `thumbnail` files + `title`, `description`) |
+| GET | `/:videoId` | Yes | Get a video by ID (increments view count) |
+| PATCH | `/:videoId` | Yes | Update title/description/thumbnail (owner only) |
+| DELETE | `/:videoId` | Yes | Delete a video (owner only) |
+| PATCH | `/toggle/publish/:videoId` | Yes | Toggle publish status (owner only) |
+
+### Comments — `/comments`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| GET | `/:videoId` | Yes | Get paginated comments for a video |
+| POST | `/:videoId` | Yes | Add a comment to a video |
+| PATCH | `/c/:commentId` | Yes | Update a comment (owner only) |
+| DELETE | `/c/:commentId` | Yes | Delete a comment (owner only) |
+
+### Likes — `/likes`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| POST | `/toggle/v/:videoId` | Yes | Toggle like on a video |
+| POST | `/toggle/c/:commentId` | Yes | Toggle like on a comment |
+| POST | `/toggle/t/:tweetId` | Yes | Toggle like on a tweet |
+| GET | `/videos` | Yes | Get all videos liked by the authenticated user |
+
+### Playlists — `/playlists`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| POST | `/` | Yes | Create a playlist |
+| GET | `/:playlistId` | Yes | Get a playlist with populated videos |
+| PATCH | `/:playlistId` | Yes | Update name/description (owner only) |
+| DELETE | `/:playlistId` | Yes | Delete a playlist (owner only) |
+| PATCH | `/add/:videoId/:playlistId` | Yes | Add a video to a playlist (owner only) |
+| PATCH | `/remove/:videoId/:playlistId` | Yes | Remove a video from a playlist (owner only) |
+| GET | `/user/:userId` | Yes | Get all playlists for a user |
+
+### Subscriptions — `/subscriptions`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| POST | `/c/:channelId` | Yes | Toggle subscription to a channel |
+| GET | `/c/:channelId` | Yes | Get a channel's subscriber list |
+| GET | `/u/:subscriberId` | Yes | Get channels a user is subscribed to |
+
+### Tweets — `/tweets`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| POST | `/` | Yes | Create a tweet |
+| GET | `/user/:userId` | Yes | Get all tweets by a user |
+| PATCH | `/:tweetId` | Yes | Update a tweet (owner only) |
+| DELETE | `/:tweetId` | Yes | Delete a tweet (owner only) |
+
+### Dashboard — `/dashboard`
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|:---:|--------------|
+| GET | `/stats` | Yes | Get the authenticated user's channel stats (total videos, views, subscribers, likes) |
+| GET | `/videos` | Yes | Get all videos uploaded by the authenticated user's channel |
+
+\* `/refresh-tokken` doesn't require a valid access token, but does require a valid refresh token (via cookie or request body).
 
 ## Postman Collection
 
-A Postman collection and environment are included under `/postman` for testing all implemented endpoints. Import `postman/collections/Youtube` and `postman/environments/Youtube.environment.yaml` into Postman, and set the `server` environment variable to your local base URL, e.g.:
+A Postman collection and environment are included under `/postman`. Import `postman/collections/Youtube` and `postman/environments/Youtube.environment.yaml`, and set the `server` environment variable to:
 
 ```
 http://localhost:8000/api/v1
 ```
-
-## Roadmap
-
-- [ ] Implement and mount `video.route.js` (upload, stream, update, delete videos)
-- [ ] Implement `comment`, `like`, `playlist`, `tweet`, and `subscription` modules
-- [ ] Implement `healthcheck` endpoint
-- [ ] Implement `dashboard` (channel stats) endpoint
-- [ ] Add request validation layer
-- [ ] Add automated tests
 
 ## Author
 
