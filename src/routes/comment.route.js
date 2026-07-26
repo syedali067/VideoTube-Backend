@@ -5,18 +5,16 @@ import {
     updateComment,
     deleteComment
 } from '../controllers/comment.controller.js';
-import { verifyJWT } from '../middlewares/auth.middleware.js';
+import { verifyJWT, optionalAuth } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.use(verifyJWT);
-
 router.route('/:videoId')
-    .get(getVideoComments)
-    .post(addComment);
+    .get(optionalAuth, getVideoComments)
+    .post(verifyJWT, addComment);
 
 router.route('/c/:commentId')
-    .patch(updateComment)
-    .delete(deleteComment);
+    .patch(verifyJWT, updateComment)
+    .delete(verifyJWT, deleteComment);
 
 export default router;
