@@ -242,7 +242,7 @@ const updateAccountDetails = asyncHandler(async(req,res) =>{
 
     return res
     .status(200)
-    .json(new ApiResponse(200, user, "Account Details Updated Successfully"))
+    .json(new ApiResponse(200, "Account Details Updated Successfully", user))
 
 });
 
@@ -377,7 +377,7 @@ const getUserChannelProfile = asyncHandler(async(req,res) =>{
 
     return res
     .status(200)
-    .json(new ApiResponse(200,channel[0],"User Channel Fetched Successfully"))
+    .json(new ApiResponse(200,"User Channel Fetched Successfully",channel[0]))
 })
 
 const getWatchHistory = asyncHandler(async(req,res) =>{
@@ -389,7 +389,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
         },
         {
             $lookup:{
-                from:"video",
+                from:"videos",
                 localField:"watchHistory",
                 foreignField:"_id",
                 as:"watchHistory",
@@ -425,7 +425,7 @@ const getWatchHistory = asyncHandler(async(req,res) =>{
     ])
     return res
     .status(200)
-    .json(new ApiResponse(200,user[0].watchHistory,"Watch History Fetched Successfully"))
+    .json(new ApiResponse(200,"Watch History Fetched Successfully",user[0].watchHistory))
 })
 
 export { 

@@ -8,7 +8,7 @@ import {
     togglePublishStatus
 } from '../controllers/video.controller.js';
 import { upload } from '../middlewares/multer.js';
-import { verifyJWT } from '../middlewares/auth.middleware.js';
+import { verifyJWT, optionalAuth } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -24,7 +24,7 @@ router.route('/')
     );
 
 router.route('/:videoId')
-    .get(getVideoById)
+    .get(optionalAuth, getVideoById)
     .patch(verifyJWT, upload.single('thumbnail'), updateVideo)
     .delete(verifyJWT, deleteVideo);
 

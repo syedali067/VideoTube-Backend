@@ -111,7 +111,7 @@ const getVideoById = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Invalid video id")
     }
 
-    const video = await Video.aggregate([
+    const pipeline = [
         { $match: { _id: new mongoose.Types.ObjectId(videoId) } },
         {
             $lookup: {
@@ -125,13 +125,53 @@ const getVideoById = asyncHandler(async (req, res) => {
             }
         },
         { $addFields: { owner: { $first: "$owner" } } }
-    ])
+    ]
+
+    if (req.user?._id) {
+        const userId = new mongoose.Types.ObjectId(req.user._id)
+        pipeline.push(
+            {
+                $lookup: {
+                    from: "likes",
+                    let: { videoId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$video", "$$videoId"] },
+                                        { $eq: ["$likedBy", userId] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "userLike"
+                }
+            },
+            { $addFields: { isLiked: { $gt: [{ $size: "$userLike" }, 0] } } },
+            { $project: { userLike: 0 } }
+        )
+    } else {
+        pipeline.push({ $addFields: { isLiked: false } })
+    }
+
+    const video = await Video.aggregate(pipeline)
 
     if (!video?.length) {
         throw new ApiError(404, "Video not found")
     }
 
     await Video.findByIdAndUpdate(videoId, { $inc: { views: 1 } })
+
+    if (req.user) {
+        await User.findByIdAndUpdate(req.user._id, {
+            $pull: { watchHistory: video[0]._id }
+        })
+        await User.findByIdAndUpdate(req.user._id, {
+            $push: { watchHistory: { $each: [video[0]._id], $position: 0 } }
+        })
+    }
 
     return res
         .status(200)
