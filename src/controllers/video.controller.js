@@ -150,10 +150,30 @@ const getVideoById = asyncHandler(async (req, res) => {
                 }
             },
             { $addFields: { isLiked: { $gt: [{ $size: "$userLike" }, 0] } } },
-            { $project: { userLike: 0 } }
+            {
+                $lookup: {
+                    from: "subscriptions",
+                    let: { ownerId: "$owner._id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$channel", "$$ownerId"] },
+                                        { $eq: ["$subscriber", userId] }
+                                    ]
+                                }
+                            }
+                        }
+                    ],
+                    as: "ownerSubscription"
+                }
+            },
+            { $addFields: { isSubscribedToOwner: { $gt: [{ $size: "$ownerSubscription" }, 0] } } },
+            { $project: { userLike: 0, ownerSubscription: 0 } }
         )
     } else {
-        pipeline.push({ $addFields: { isLiked: false } })
+        pipeline.push({ $addFields: { isLiked: false, isSubscribedToOwner: false } })
     }
 
     const video = await Video.aggregate(pipeline)
