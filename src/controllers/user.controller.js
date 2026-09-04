@@ -23,6 +23,31 @@ const generateAccessAndRefreshTokens = async function(userId) {
     }
 };
 
+// Centralized cookie options for cross-domain auth (backend on Back4App, frontend on Vercel).
+// sameSite: 'none' is required for the browser to send these cookies on cross-site requests;
+// it MUST be paired with secure: true (browsers reject sameSite:'none' cookies over http).
+const accessTokenCookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000 // 1 day, matches ACCESS_TOKEN_EXPIRY
+};
+
+const refreshTokenCookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days, matches REFRESH_TOKEN_EXPIRY
+};
+
+// clearCookie must be called with the SAME attributes (minus maxAge) used to set the cookie,
+// or the browser won't recognize it as the same cookie and won't clear it.
+const clearCookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none'
+};
+
 const registerUser = asyncHandler(async (req, res) => { 
     //get data from user
     const { username, email, fullName, password } = req.body;
@@ -110,14 +135,10 @@ const loginUser = asyncHandler(async (req, res) => {
     
     //send cookies
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
-    const options = {
-        httpOnly: true,
-        secure: true
-    };
 
     return res.status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", refreshToken, options)
+        .cookie("accessToken", accessToken, accessTokenCookieOptions)
+        .cookie("refreshToken", refreshToken, refreshTokenCookieOptions)
         .json(
             new ApiResponse(
                 200,
@@ -139,14 +160,11 @@ const logoutUser = asyncHandler(async (req, res) => {
              returnDocument: 'after' 
         }
     );
-    const options = {
-        httpOnly: true,
-        secure: true
-    };
+
     return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accessToken", clearCookieOptions)
+    .clearCookie("refreshToken", clearCookieOptions)
     .json(
         new ApiResponse(
             200,
@@ -175,15 +193,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             throw new ApiError(401, "Refresh Token is expired or used");
         }
 
-        const options = {
-            httpOnly: true,
-            secure: true
-        };
         const { accessToken, newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
         return res
         .status(200)
-        .cookie("accessToken", accessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
+        .cookie("accessToken", accessToken, accessTokenCookieOptions)
+        .cookie("refreshToken", newRefreshToken, refreshTokenCookieOptions)
         .json(
             new ApiResponse(
                 200,
